@@ -33,14 +33,14 @@ This is the umbrella skill for SOUL (Systemic Operational Underlying Logic) prof
 
 ## Template File Inventory
 
-| Template | Canonical Path | Sync Path | Status |
-|----------|---------------|-----------|--------|
-| `SOUL_TEMPLATE_V7.md` | `templates/` | `~/.hermes/` | Live (v7.2 body / v7.3 clean) |
-| `SOUL_TEMPLATE_ORCHESTRATOR_V73.md` | `templates/` | `~/.hermes/` | **CURRENT** (v7.3) |
-| `SOUL_TEMPLATE_V7_REFERENCE.md` | `references/` | — | Reference & Citations (v7.3) |
-| `SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` | `references/` | — | Reference & Citations (v7.3) |
+| Template | Canonical Path | Status |
+|----------|---------------|--------|
+| `SOUL_TEMPLATE_V7.md` | `templates/` | Live (v7.2 body / v7.3 clean) |
+| `SOUL_TEMPLATE_ORCHESTRATOR_V73.md` | `templates/` | **CURRENT** (v7.3) |
+| `SOUL_TEMPLATE_V7_REFERENCE.md` | `references/` | Reference & Citations (v7.3) |
+| `SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` | `references/` | Reference & Citations (v7.3) |
 
-**IMPORTANT:** Always sync templates to `~/.hermes/` when deploying or updating. Reference files should reside strictly in the `references/` directory to prevent them from entering agent contexts.
+**IMPORTANT:** Reference files should reside strictly in the `references/` directory to prevent them from entering agent contexts.
 
 ## Standard Deployment Workflow
 
@@ -149,8 +149,7 @@ For orchestrator profiles, Section C must additionally include:
 ### Template Creation Workflow (V7.3+ Pattern)
 1. Read ALL existing references in `references/`.
 2. Build the full template via `write_file` (not iterative patches for major version bumps).
-3. Sync to BOTH paths: `templates/` and `~/.hermes/`.
-4. Update companion reference file in `references/`.
+3. Update companion reference file in `references/`.
 5. Validate: XML tag balance, placeholder integrity, section structure, step/anchor/mode counts.
 
 ### Triangulation Principle (Critical — V7.3 Lesson)
