@@ -55,13 +55,9 @@ Always choose the template based on the agent's function:
 #### For Worker Profiles (V7):
 1. Read `SOUL_TEMPLATE_V7.md` in full.
 2. Replace all `{{PLACEHOLDER}}` values with profile-specific content — **MANDATORY: follow the format specified in each placeholder's GUIDANCE/Example**. If the template says `Format: "[Role] for [context] inside [system]; [function] only; [key constraint]."` — your value MUST be one descriptive sentence in that exact format. Do NOT use free-form text.
-3. Rename `<soul_template>` → `<soul_config>`.
-4. Remove the instruction header (the `<!-- INSTRUCTIONS: ... -->` block at the top of the template if present).
-5. Remove `<metadata>...</metadata>` block.
-6. Remove **all** HTML comments — instruction header, section dividers, inline annotations, guidance comments, everything between `<!--` and `-->`. XML-style tags (`<section_a>`, `<step n="0">`, etc.) already provide structural navigation.
-7. **Placeholder compliance check:** After filling all placeholders, re-read each filled value and compare against its GUIDANCE/Example in the template. If the format does not match, rewrite it.
-8. Deploy to `~/.hermes/profiles/<name>/SOUL.md` (or `~/.hermes/SOUL.md` for default) using `write_file` — write the entire file from scratch, do NOT use `sed`/`awk`/`patch` for multi-line XML content.
-9. **Post-deployment validation:** Perform checks to verify counts, placeholder leaks, and comments (see [Verification](#verification) section).
+3. **Placeholder compliance check:** After filling all placeholders, re-read each filled value and compare against its GUIDANCE/Example in the template. If the format does not match, rewrite it.
+4. Deploy to `~/.hermes/profiles/<name>/SOUL.md` (or `~/.hermes/SOUL.md` for default) using `write_file` — write the entire file from scratch, do NOT use `sed`/`awk`/`patch` for multi-line content.
+5. **Post-deployment validation:** Perform checks to verify placeholder leaks and structure (see [Verification](#verification) section).
 
 #### For Orchestrator Profiles (V73):
 1. Read `SOUL_TEMPLATE_ORCHESTRATOR_V73.md` in full.
@@ -70,13 +66,10 @@ Always choose the template based on the agent's function:
    - `{{AVAILABLE_WORKER_PROFILES}}` — Comma-separated list of verified worker profile names.
    - `{{WORKDIR}}` — Absolute path to persistent workspace directory.
    - `{{AGENT_NAME}}`, `{{AGENT_DESCRIPTION}}`, `{{PROCEED_SIGNAL}}` — As per profile.
-3. Rename `<soul_template>` → `<soul_config>`.
-4. Remove all HTML comments and guidance comments — **remove everything between `<!--` and `-->`, no exceptions.**
-5. Remove `<metadata>...</metadata>` block.
-6. **Placeholder compliance check:** After filling all placeholders, re-read each filled value and compare against its GUIDANCE/Example in the template.
-7. Deploy to `~/.hermes/profiles/<name>/SOUL.md` using `write_file`.
-8. **Post-deployment validation:** Perform checks to verify counts, placeholder leaks, and comments (see [Verification](#verification) section).
-9. Verify: `hermes profile list` shows the new profile.
+3. **Placeholder compliance check:** After filling all placeholders, re-read each filled value and compare against its GUIDANCE/Example in the template.
+4. Deploy to `~/.hermes/profiles/<name>/SOUL.md` using `write_file`.
+5. **Post-deployment validation:** Perform checks to verify placeholder leaks and structure (see [Verification](#verification) section).
+6. Verify: `hermes profile list` shows the new profile.
 
 ### 4. Internet-First Grounding Principle (V7 Strict — MANDATORY for ALL profiles)
 **Core rule: Internal parametric knowledge is FORBIDDEN as a factual source.**
@@ -117,7 +110,7 @@ Always choose the template based on the agent's function:
 ### 6. SOUL.md Design Principles
 
 #### Structural Principles
-- **XML semantic precision:** `<soul_template>` in template → `<soul_config>` in deployed profile.
+- **Pure Markdown format:** Templates use standard Markdown (headings, lists, tables) — no XML tags, no root wrappers, no HTML comments.
 - **Placeholder discipline:** Fill ONLY `{{PLACEHOLDER}}` fields. No improvisation.
 - **Determinism:** No "fallback" or "self-assessment" patterns. Every factual path ends in verified source or STOP.
 - **Redundancy elimination:** Each concept appears EXACTLY ONCE across all sections.
@@ -148,7 +141,19 @@ For orchestrator profiles, Section C must additionally include:
 1. Read ALL existing references in `references/`.
 2. Build the full template via `write_file` (not iterative patches for major version bumps).
 3. Update companion reference file in `references/`.
-4. Validate: XML tag balance, placeholder integrity, section structure, step/anchor/mode counts.
+4. Validate: placeholder integrity, section structure, step/anchor/mode counts.
+
+#### Format Migration Pattern (V7.4 — Full Markdown)
+When migrating templates from XML-style to full Markdown:
+1. **Template first:** Convert all `<tag>` hierarchy to standard Markdown (`##`, `###`, `####`, tables, lists). Remove root wrapper tags entirely (`<soul_template>`, `<soul_config>`) — they are not needed in pure Markdown.
+2. **Cascade update:** After template format change, update ALL downstream files in this order:
+   - `references/SOUL_TEMPLATE_V7_REFERENCE.md` — update `Format` field, changelog entries, architecture rationale
+   - `references/SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` — same
+   - `references/CHANGELOG.md` — update version entries to reflect the migration
+   - `SKILL.md` — update deployment workflow steps, validation checks, pitfalls, structural principles
+3. **Validation sweep:** After migration, grep all files in the skill directory for stale references (`<section_`, `<soul_template>`, `<soul_config>`, `semantic-xml`, `XML tag balance`) and clean them.
+
+**Key lesson:** Root wrapper tags (`<soul_template>`, `<soul_config>`) are unnecessary in Markdown files. Removing them eliminates token overhead and simplifies deployment (no rename step). The Markdown heading structure alone provides navigation.
 
 #### Triangulation Principle (Critical — V7.4 Lesson)
 - **Forum discussions** = practitioner knowledge, real-world problems.
@@ -159,27 +164,30 @@ For orchestrator profiles, Section C must additionally include:
 ## Pitfalls
 
 ### 1. Comment Handling on Deployment
-- **Pitfall:** Leaving template comments, inline guidance, or section dividers in the deployed `SOUL.md`. This bloats the token usage and decays context attention.
-- **Fix:** **Remove all HTML comments on deployment.** Everything between `<!--` and `-->` must be removed — instruction header, section dividers, inline annotations, guidance comments, all of it. XML-style tags already provide structural navigation.
+- **Pitfall:** Leaving template comments or inline guidance in the deployed `SOUL.md`. This bloats the token usage and decays context attention.
+- **Fix:** **Remove all HTML comments on deployment.** Everything between `<!--` and `-->` must be removed — instruction header, section dividers, inline annotations, guidance comments, all of it. The Markdown heading structure already provides navigation.
 
 ### 2. Multi-line Edits and Sed/Awk
-- **Pitfall:** Using `sed`/`awk`/`patch` to perform multi-line XML modifications on `SOUL.md`. This often results in broken tags and silent failures.
-- **Fix:** **NEVER use `sed`/`awk` for multi-line XML content.** Always use `write_file` to write the entire deployed `SOUL.md` from scratch.
+- **Pitfall:** Using `sed`/`awk`/`patch` to perform multi-line modifications on `SOUL.md`. This often results in broken formatting and silent failures.
+- **Fix:** **NEVER use `sed`/`awk` for multi-line content.** Always use `write_file` to write the entire deployed `SOUL.md` from scratch.
 
 ### 3. Patching Protocol
 - **Pitfall:** Trying to repeatedly patch a highly corrupted template.
 - **Fix:** After 3 failed `patch` attempts → perform a full `write_file` rewrite. If you get a "Found N matches" error, add more surrounding context. After patching, ALWAYS re-read the full file.
+
+### 4. Incomplete Cascading Updates
+- **Pitfall:** Updating template format but forgetting to cascade to references, CHANGELOG, and SKILL.md. This leaves stale XML references in downstream files.
+- **Fix:** After ANY template format change, follow the Format Migration Pattern (see above). Always grep the entire skill directory for stale references before reporting completion.
 
 ## Verification
 
 ### Post-Deployment Validation Protocol (V7.4+)
 Immediately after deploying a `SOUL.md` profile, the agent MUST run the following validation checks. Do NOT report success to the user if any check fails:
 
-1. **XML Tag Balance:** Confirm equal count of opening and closing section tags (e.g. run `grep -c '<section_' <path>` and `grep -c '</section_' <path>`).
-2. **Placeholder Leak Check:** Verify no `{{` or `}}` placeholders remain in the file.
-3. **HTML Comment Leak Check:** Ensure no HTML comments remain (i.e. confirm `grep -c '<!--'` is 0).
-4. **Section C Completeness:** Ensure Section C has concrete content filled in every field without placeholder residuals.
-5. **Sync Verification:** After syncing to a second path, verify line counts and content match.
+1. **Placeholder Leak Check:** Verify no `{{` or `}}` placeholders remain in the file.
+2. **HTML Comment Leak Check:** Ensure no HTML comments remain (i.e. confirm `grep -c '<!--'` is 0).
+3. **Section C Completeness:** Ensure Section C has concrete content filled in every field without placeholder residuals.
+4. **Sync Verification:** After syncing to a second path, verify line counts and content match.
 
 ## References
 - `references/SOUL_TEMPLATE_V7_REFERENCE.md` — Complete rationale, citation index, and design decisions for Worker (V7) profiles.

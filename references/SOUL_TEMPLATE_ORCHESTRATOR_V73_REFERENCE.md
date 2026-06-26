@@ -12,9 +12,8 @@ here should ever be loaded into a live agent's prompt context.
 1. Read this reference to understand the multi-agent control plane, task
    decomposition, and delegation loops.
 2. In `SOUL_TEMPLATE_ORCHESTRATOR_V73.md`, fill every `{{PLACEHOLDER}}`.
-3. Keep the three `<section_*>` tags intact — they are semantic markers that structure the agent's attention.
-4. When deploying a live profile: replace placeholders, then rename the root
-   tag from `<soul_template>` to `<soul_config>`.
+3. Keep the markdown heading structure intact — it structures the agent's attention cleanly.
+4. When deploying a live profile: replace placeholders. No root XML tags or comments are needed.
 5. Remove the instructions and any comments from the final deployed file to minimize token bloat.
 6. Never merge this reference file's theoretical notes back into the deployed active profile.
 
@@ -25,13 +24,13 @@ here should ever be loaded into a live agent's prompt context.
 | Field | Value |
 |---|---|
 | Template Engine | v7 (Orchestrator-Extended) |
-| Format | semantic-xml |
+| Format | full-markdown |
 | Backbone | v7.4-orchestrator-literature-backed |
 | Version | v7.3 (Orchestrator Specific) |
 
 ### V7.4 (June 2026 Sync)
 - **Context Hygiene:** Distillation triggers aligned with worker template (proactive trigger at >20% context usage, mandatory reset/re-injection at >30% context usage).
-- **Governance:** Section C `hard_guardrails` transitioned to XML-tag structure (`<hard_guardrails>`, `<guardrail>`) for semantic parsing.
+- **Full Markdown Refactor:** Converted all templates from XML-style structures to standard, lightweight, and clean Markdown formatting (using semantic headings, lists, and tables), reducing prompt overhead and improving token efficiency. Removed all root tags and XML structures.
 
 ### V7.3-ORCH Changelog (June 2026)
 

@@ -14,12 +14,9 @@ operational.
    exclusively from `SOUL_TEMPLATE_V7.md` when instantiating a profile.
 2. In `SOUL_TEMPLATE_V7.md`, fill every `{{PLACEHOLDER}}`. Section 3 below
    provides guidance on each field.
-3. Keep the three `<section_*>` tags and the one-line `<!-- STEP N -->` comments
-   intact — they cost negligible tokens and keep the file navigable.
-4. When deploying a real profile: replace all placeholders, then rename the root
-   tag from `<soul_template>` to `<soul_config>`.
-5. Do not add an XML declaration — this is a `.md` file with embedded XML-style
-   tags, not a standalone XML document.
+3. Keep the markdown heading structure intact — it structures the agent's attention cleanly.
+4. When deploying a real profile: replace all placeholders. No root XML tags or comments are needed.
+5. Do not add any XML declarations — this is a pure `.md` file.
 6. Never merge content from this reference file into a deployed profile. If you
    need to preserve "why" for a future reader, link to this file by version
    rather than re-embedding citations.
@@ -34,7 +31,7 @@ operational.
 | Field | Value |
 |---|---|
 | Template Engine | v7 |
-| Format | semantic-xml |
+| Format | full-markdown |
 | Backbone | v7-research-backed |
 | Body Version | v7.1 |
 | Context Hygiene | v7.4 |
@@ -43,7 +40,7 @@ operational.
 ### V7.4 (Added - June 2026)
 
 - **Dynamic Context Hygiene:** Moved context distillation/anchor injection triggers from message-count (coarse) to %-of-context-limit usage (fine-grained, >20% and >30%).
-- **Section C Governance:** Structured Section C `hard_guardrails` into XML-style tags for explicit semantic enforcement.
+- **Full Markdown Refactor:** Converted all templates from XML-style structures to standard, lightweight, and clean Markdown formatting (using semantic headings, lists, and tables), reducing prompt overhead and improving token efficiency. Removed all root tags and XML structures.
 
 ### V7.3 (Added)
 
@@ -65,7 +62,6 @@ operational.
   mitigation)
 - Step 1 added `semantic_grounding` sub-step
 - Removed "model doubt detection" mechanism — LLM has no self-awareness
-- Added `priority_level` tags to failure modes for attention steering
 
 ### V7.1 (Original)
 
@@ -186,14 +182,15 @@ If faults propagate across multi-step execution, the system must perform a struc
 
 ---
 
-### 4.5 Section C — XML-Structured Governance (V7.4 update)
+### 4.5 Section C — Markdown-Structured Governance (V7.4 update)
 
-Section C now enforces hard governance via `<hard_guardrails>` tags.
+Section C now enforces hard governance via standard Markdown headings and lists.
 
-**Why XML for Governance?**
-1. **Structural Weight**: Using tags like `<hard_guardrail>` forces the model's attention mechanism to treat these constraints as a separate, structured block of logic rather than merely part of a narrative list.
-2. **Semantic Clarity**: It clarifies the distinction between constraints (the *what* and *how*) and the hard guardrails (the absolute *must-nots*).
-3. **Parseability**: Enables programmatic validation of the governance structure before the template is even instantiated.
+**Why Full Markdown for Governance?**
+1. **Readability & Simplicity**: Using standard Markdown (headings, lists) improves readability and reduces cognitive load compared to XML tags.
+2. **Native Rendering**: Markdown renders natively across platforms, ensuring consistent display without requiring special parsers.
+3. **Reduced Overhead**: Eliminating XML tags and explicit section markers significantly reduces token overhead, improving context efficiency.
+4. **Ease of Authoring**: Markdown is easier to write and maintain, streamlining template updates.
 
 ---
 
@@ -283,13 +280,13 @@ Once a model makes a wrong assumption in a trajectory, it does not self-correct 
 
 ## 7. Template Architecture Decisions
 
-### Why XML-Style Tags?
+### Why Full Markdown Structure?
 
-The template uses `<tag>` syntax rather than Markdown or YAML because:
-1. **Structural nesting**: XML handles deeply nested structures (steps within protocols within sections) more naturally than Markdown
-2. **Schema validation**: the tag structure can be schema-validated before deployment
-3. **Agent parsing**: LLMs generally parse hierarchical XML with less ambiguity than equivalent Markdown
-4. **Diff-ability**: tag-based diffs are cleaner than narrative-format diffs when reviewing template changes
+The template now uses full Markdown (headings, lists, tables) rather than XML-style tags because:
+1. **Native Rendering**: Markdown renders natively across platforms, ensuring consistent display and improved readability.
+2. **Reduced Token Overhead**: Eliminating XML tags and explicit structural markers significantly reduces prompt overhead, improving token efficiency and context window utilization.
+3. **Simplified Authoring & Maintenance**: Markdown is simpler to write, read, and maintain, streamlining template updates and reducing cognitive load.
+4. **Improved Compatibility**: Full Markdown is compatible with a wider range of tools and renderers, enhancing portability.
 
 ### Why Three Sections?
 
@@ -305,7 +302,7 @@ Explanations, rationales, and academic citations in the active agent prompt serv
 
 ### Versioning Convention
 
-- Template engine (v7): changes to the tag structure or overall architecture
+- Template engine (v7): changes to the Markdown structure or overall architecture
 - Body (v7.1): additions to operational content that don't change the structure
 - Context Hygiene (v7.2): major additions to a specific domain within the template
 - Tool-Call Reliability (v7.3): further additions in another domain
